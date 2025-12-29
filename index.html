@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[jeevs@cyber]~ Cyber Security Portfolio</title>
+    <style>
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --text-primary: #00ff00; /* Green terminal text */
+            --text-accent: #ff0000; /* Red for prompts/errors */
+            --text-blue: #0066ff; /* Blue accents */
+            --border: #333333;
+            --glow-red: 0 0 10px #ff0000;
+            --glow-blue: 0 0 10px #0066ff;
+            --glow-green: 0 0 10px #00ff00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', 'Consolas', 'Lucida Console', monospace;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.4;
+            overflow-x: hidden;
+            padding: 0;
+            position: relative;
+        }
+
+        #glitch-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.8;
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.6;
+        }
+
+        /* Terminal cursor blink */
+        .cursor {
+            display: inline-block;
+            background-color: var(--text-primary);
+            width: 12px;
+            height: 18px;
+            vertical-align: middle;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        header {
+            background-color: rgba(10,10,10,0.8);
+            padding: 30px;
+            text-align: left;
+            border-bottom: 2px solid var(--text-accent);
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        .terminal-prompt {
+            color: var(--text-accent);
+            font-weight: bold;
+        }
+
+        .prompt-user {
+            color: var(--text-blue);
+        }
+
+        header h1 {
+            color: var(--text-primary);
+            font-size: 2.2em;
+            margin: 10px 0;
+            text-shadow: var(--glow-green);
+        }
+
+        .subtitle {
+            color: var(--text-blue);
+            font-size: 1.1em;
+            margin: 5px 0;
+            text-shadow: var(--glow-blue);
+        }
+
+        /* Terminal scan lines */
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(transparent 50%, rgba(0,255,0,0.03) 50%);
+            background-size: 100% 2px;
+            pointer-events: none;
+            animation: scanline 4s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-2px); }
+            100% { transform: translateY(100%); }
+        }
+
+        nav {
+            background-color: rgba(10,10,10,0.8);
+            padding: 15px 30px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            white-space: nowrap;
+            overflow-x: auto;
+            backdrop-filter: blur(5px);
+        }
+
+        nav::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        nav::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        nav::-webkit-scrollbar-thumb {
+            background: var(--text-accent);
+        }
+
+        nav a {
+            color: var(--text-blue);
+            text-decoration: none;
+            margin-right: 30px;
+            font-weight: bold;
+            font-size: 1.1em;
+            padding: 5px 10px;
+            border-radius: 3px;
+            transition: all 0.3s;
+            text-shadow: none;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--text-primary);
+            background-color: var(--text-accent);
+            text-shadow: var(--glow-red);
+            box-shadow: var(--glow-red);
+        }
+
+        section {
+            padding: 50px 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+            min-height: 100vh;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+            position: relative;
+            z-index: 10;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(3px);
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h2 {
+            color: var(--text-accent);
+            font-size: 1.8em;
+            border-left: 4px solid var(--text-accent);
+            padding: 10px 20px;
+            background-color: var(--bg-secondary);
+            margin-bottom: 30px;
+            text-shadow: var(--glow-red);
+            display: inline-block;
+        }
+
+        .about-content, .skills-grid, .project {
+            background-color: rgba(10,10,10,0.7);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            padding: 25px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(2px);
+        }
+
+        .about-content::before {
+            content: '> ';
+            color: var(--text-accent);
+            font-weight: bold;
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            font-size: 1.2em;
+        }
+
+        .about-content p {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .skill-item {
+            padding: 15px;
+            border-left: 3px solid var(--text-blue);
+            background-color: #111;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .skill-item:hover {
+            border-left-color: var(--text-accent);
+            box-shadow: var(--glow-blue);
+            transform: translateX(5px);
+        }
+
+        .skill-item::before {
+            content: '[+] ';
+            color: var(--text-primary);
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        ul li {
+            position: relative;
+            margin-bottom: 12px;
+            padding-left: 20px;
+        }
+
+        ul li::before {
+            content: '$ ';
+            color: var(--text-blue);
+            position: absolute;
+            left: 0;
+        }
+
+        .project {
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid var(--text-accent);
+        }
+
+        .project:hover {
+            border-left-color: var(--text-blue);
+            box-shadow: var(--glow-blue), inset 0 0 20px rgba(0,102,255,0.1);
+            transform: scale(1.02);
+        }
+
+        .project h3 {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            text-shadow: var(--glow-green);
+        }
+
+        .project-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background-color: #111;
+            padding: 0 10px;
+            margin-top: 10px;
+            border-radius: 3px;
+        }
+
+        .project.expanded .project-details {
+            max-height: 200px;
+            padding: 15px 10px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .contact-item {
+            padding: 20px;
+            border: 2px solid var(--text-blue);
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .contact-item:hover {
+            border-color: var(--text-accent);
+            box-shadow: var(--glow-red);
+        }
+
+        .contact-item a {
+            color: var(--text-blue);
+            text-decoration: none;
+            font-size: 1.1em;
+        }
+
+        .contact-item a:hover {
+            color: var(--text-accent);
+            text-shadow: var(--glow-red);
+        }
+
+        footer {
+            background-color: rgba(10,10,10,0.8);
+            text-align: center;
+            padding: 30px;
+            border-top: 2px solid var(--text-accent);
+            color: var(--text-blue);
+            font-size: 0.9em;
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(5px);
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        .glitch-active {
+            animation: glitch 0.3s infinite;
+        }
+
+        @media (max-width: 768px) {
+            section { padding: 30px 20px; }
+            header h1 { font-size: 1.8em; }
+            nav a { margin-right: 15px; font-size: 1em; }
+        }
+
+        .typewriter {
+            border-right: 2px solid var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 4s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="glitch-canvas"></canvas>
+    <canvas id="particles-canvas"></canvas>
+
+    <header>
+        <div class="terminal-prompt">
+            <span class="prompt-user">[jeevs@cyber]</span>:<span style="color: var(--text-blue);">~</span>$ 
+            <span class="typewriter" style="color: var(--text-primary);">whoami | cat portfolio</span>
+            <span class="cursor"></span>
+        </div>
+        <h1>Cyber Security Specialist</h1>
+        <div class="subtitle">CTF | Crypto | WebExp | DevSecOps | pwn.college | L3m0nCTF</div>
+    </header>
+
+    <nav>
+        <a href="#about" class="active">about</a>
+        <a href="#skills">skills</a>
+        <a href="#projects">projects</a>
+        <a href="#contact">contact</a>
+    </nav>
+
+    <section id="about">
+        <h2>about jeevs</h2>
+        <div class="about-content">
+            <p>root@jeevs:~$ cyber security enthusiast mastering Capture The Flag challenges, RSA cryptanalysis, XOR decryption engines, web exploitation vectors (XSS/SQLi/CSRF), pwn.college binaries, and production-grade SecDevOps pipelines.</p>
+            <p>Daily driver: Linux hardened environments, Bash automation, Git workflows, Python crypto tooling, Docker/K8s container security, GitHub Actions CI/CD with SAST/DAST scanning.</p>
+            <p>Recent ops: L3m0nCTF RSA factorization (partial key leak → modulus split), PDF forensics (qpdf stream decompression → hidden JS), flag capture servers (port 1337 Python/JS redirect exfil).</p>
+        </div>
+    </section>
+
+    <section id="skills">
+        <h2>core skills</h2>
+        <div class="skills-grid">
+            <div class="skill-item">
+                <strong style="color: var(--text-accent);">cryptography</strong><br>
+                RSA factorization • XOR keystream recovery • AES/SHA256 • PEM parsing • key derivation
+            </div>
+            <div class="skill-item">
+                <strong style="color: var(--text-accent);">web security</strong><br>
+                XSS/SQLi/CSRF • Flask/Node hardening • CORS bypass • JS redirect servers • OWASP Top 10
+            </div>
+            <div class="skill-item">
+                <strong style="color: var(--text-accent);">devsecops</strong><br>
+                Docker/K8s security • GitHub Actions CI/CD • Terraform IaC • Railway deployments • SAST/DAST
+            </div>
+            <div class="skill-item">
+                <strong style="color: var(--text-accent);">reverse engineering</strong><br>
+                x86/pwn.college • gdb/IDA Pro basics • buffer overflows • ROP chains • binary analysis
+            </div>
+            <div class="skill-item">
+                <strong style="color: var(--text-accent);">forensics</strong><br>
+                PDF/EXIF stego • binwalk/strings • qpdf decompression • metadata extraction • JPEG stegtools
+            </div>
+            <div class="skill-item">
+                <strong style="color: var(--text-accent);">infrastructure</strong><br>
+                Linux sysadmin • Bash automation • Git branching/PRs • networking (Wireshark) • firewalls/VPN
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <h2>projects & ctf pwns</h2>
+        <div class="project" data-toggle="project-1">
+            <h3>L3m0nCTF{97} – RSA Key Bleed</h3>
+            <div class="project-details">
+                Partial private key leak → n factorization (Python NumPy matrix ops) → flag recovery. Handled 1024-bit modulus with custom pollard rho implementation.
+            </div>
+        </div>
+        <div class="project" data-toggle="project-2">
+            <h3>XOR Decrypt Engine</h3>
+            <div class="project-details">
+                Multi-ciphertext XOR brute force (shared keystream). QR code input parsing + non-printable char handling. Python script: 30s runtime → L3m0nCTF flag.
+            </div>
+        </div>
+        <div class="project" data-toggle="project-3">
+            <h3>Flag Exfil Server (port 1337)</h3>
+            <div class="project-details">
+                Python HTTP server + JS window.location redirect chain. Multi-terminal setup: challenge → listener → client. Captured flags from pwn.college webexp.
+            </div>
+        </div>
+        <div class="project" data-toggle="project-4">
+            <h3>SecDevOps Pipeline</h3>
+            <div class="project-details">
+                GitHub Actions → Docker build → Railway deploy (Flask "Hello World"). Added Trivy vuln scan, Bandit SAST, npm audit. Zero-downtime blue-green deploy.
+            </div>
+        </div>
+        <div class="project" data-toggle="project-5">
+            <h3>bonfire.jpg Forensics</h3>
+            <div class="project-details">
+                EXIF riddle → 97 (last prime <100) + Twitter/X bluebird → L3m0nCTF{97}. qpdf nested stream decomp + steghide binwalk analysis.
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2>connect $</h2>
+        <div class="contact-grid">
+            <div class="contact-item">
+                <div>email</div>
+                <a href="mailto:jeevs@cyber.local">jeevs@cyber.local</a>
+            </div>
+            <div class="contact-item">
+                <div>github</div>
+                <a href="https://github.com/jeevs" target="_blank">github.com/jeevs</a>
+            </div>
+            <div class="contact-item">
+                <div>linkedin</div>
+                <a href="https://linkedin.com/in/jeevs-cyber" target="_blank">linkedin.com/in/jeevs-cyber</a>
+            </div>
+            <div class="contact-item">
+                <div>ctf writeups</div>
+                <a href="https://github.com/jeevs/ctf-writeups" target="_blank">github.com/jeevs/ctf-writeups</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div>[jeevs@coimbatore ~]$ <span style="color: var(--text-accent);">echo "secured with RSA-4096 + ❤️ from Tamil Nadu" | base64</span></div>
+        <div style="color: var(--text-blue); margin-top: 10px;">© 2025 jeevs | last login Dec 24 14:48 IST</div>
+    </footer>
+
+    <script>
+        // Glitch Canvas Background - Digital distortion lines + RGB shifts
+        const glitchCanvas = document.getElementById('glitch-canvas');
+        const gctx = glitchCanvas.getContext('2d');
+
+        glitchCanvas.width = window.innerWidth;
+        glitchCanvas.height = window.innerHeight;
+
+        let glitchIntensity = 0;
+
+        function drawGlitch() {
+            gctx.clearRect(0, 0, glitchCanvas.width, glitchCanvas.height);
+
+            if (Math.random() < glitchIntensity) {
+                // Random horizontal glitch lines
+                const numLines = Math.floor(Math.random() * 10) + 5;
+                for (let i = 0; i < numLines; i++) {
+                    const y = Math.random() * glitchCanvas.height;
+                    const height = Math.random() * 50 + 10;
+                    const offset = Math.random() * 20 - 10;
+
+                    // Red channel shift
+                    gctx.fillStyle = 'rgba(255,0,0,0.3)';
+                    gctx.fillRect(0, y, glitchCanvas.width + offset, height);
+
+                    // Blue channel shift opposite
+                    gctx.fillStyle = 'rgba(0,102,255,0.3)';
+                    gctx.fillRect(0 + offset * -1, y, glitchCanvas.width, height);
+
+                    // Green noise
+                    gctx.fillStyle = 'rgba(0,255,0,0.1)';
+                    gctx.fillRect(0, y, glitchCanvas.width, height);
+                }
+
+                // Scan lines
+                gctx.strokeStyle = 'rgba(0,255,0,0.2)';
+                for (let i = 0; i < glitchCanvas.height; i += 4) {
+                    gctx.beginPath();
+                    gctx.moveTo(0, i);
+                    gctx.lineTo(glitchCanvas.width, i);
+                    gctx.stroke();
+                }
+            }
+
+            requestAnimationFrame(drawGlitch);
+        }
+
+        // Trigger glitch bursts randomly + stronger on hover
+        setInterval(() => {
+            if (Math.random() < 0.3) {
+                glitchIntensity = 0.8;
+                setTimeout(() => glitchIntensity = 0.2, 300);
+            }
+        }, 3000);
+
+        document.body.addEventListener('mousemove', () => {
+            glitchIntensity = 0.6;
+            clearTimeout(window.glitchTimeout);
+            window.glitchTimeout = setTimeout(() => glitchIntensity = 0.2, 500);
+        });
+
+        drawGlitch();
+
+        // Particles (unchanged)
+        const particlesCanvas = document.getElementById('particles-canvas');
+        const pctx = particlesCanvas.getContext('2d');
+
+        particlesCanvas.width = window.innerWidth;
+        particlesCanvas.height = window.innerHeight;
+
+        const particles = [];
+        const numParticles = 150;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * particlesCanvas.width;
+                this.y = Math.random() * particlesCanvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+                this.color = ['#00ff00', '#ff0000', '#0066ff'][Math.floor(Math.random() * 3)];
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > particlesCanvas.width || this.x < 0) this.speedX *= -1;
+                if (this.y > particlesCanvas.height || this.y < 0) this.speedY *= -1;
+            }
+
+            draw() {
+                pctx.fillStyle = this.color;
+                pctx.shadowBlur = 15;
+                pctx.shadowColor = this.color;
+                pctx.beginPath();
+                pctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                pctx.fill();
+                pctx.shadowBlur = 0;
+            }
+        }
+
+        for (let i = 0; i < numParticles; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            pctx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        animateParticles();
+
+        // Resize handling
+        window.addEventListener('resize', () => {
+            glitchCanvas.width = window.innerWidth;
+            glitchCanvas.height = window.innerHeight;
+            particlesCanvas.width = window.innerWidth;
+            particlesCanvas.height = window.innerHeight;
+        });
+
+        // Existing interactivity (smooth scroll, etc.)
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const target = document.getElementById(targetId);
+                target.scrollIntoView({ behavior: 'smooth' });
+                
+                document.querySelectorAll('nav a').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+            });
+        });
+
+        const sections = document.querySelectorAll('section');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        sections.forEach(s => observer.observe(s));
+
+        window.addEventListener('scroll', () => {
+            const fromTop = window.scrollY + 100;
+            sections.forEach(section => {
+                const top = section.offsetTop;
+                const height = section.offsetHeight;
+                if (fromTop >= top && fromTop < top + height) {
+                    const activeId = section.getAttribute('id');
+                    document.querySelectorAll('nav a').forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${activeId}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        });
+
+        document.querySelectorAll('.project').forEach(project => {
+            project.addEventListener('click', () => {
+                project.classList.toggle('expanded');
+            });
+        });
+
+        document.querySelectorAll('.skill-item').forEach(item => {
+            item.addEventListener('mouseenter', () => item.classList.add('glitch-active'));
+            item.addEventListener('mouseleave', () => item.classList.remove('glitch-active'));
+        });
+
+        // Easter egg
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.altKey && e.key === 'h') {
+                document.body.style.filter = 'invert(1) hue-rotate(180deg)';
+                setTimeout(() => document.body.style.filter = '', 2000);
+            }
+        });
+    </script>
+
+</body>
+</html>

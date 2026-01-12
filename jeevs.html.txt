@@ -3,83 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
-    <title>My Personal Portfolio</title>
-    <style>
-        /* Reset and basic styles */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body, html { height: 100%; font-family: 'Arial', sans-serif; color: #fff; overflow-x: hidden; }
-
-        /* Particles container - full screen background */
-        #particles-js {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0f0f1e; /* Dark background for contrast */
-            z-index: -1;
-        }
-
-        /* Main content overlay */
-        .content {
-            position: relative;
-            z-index: 1;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
-        }
-
-        header h1 {
-            font-size: 4rem;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
-        }
-
-        header p {
-            font-size: 1.5rem;
-            margin-bottom: 30px;
-        }
-
-        nav a {
-            color: #fff;
-            text-decoration: none;
-            margin: 0 15px;
-            font-size: 1.2rem;
-            padding: 10px 20px;
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 5px;
-            transition: background 0.3s, border 0.3s;
-        }
-
-        nav a:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: #fff;
-        }
-
-        section {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-            background: rgba(0,0,0,0.4);
-            border-radius: 10px;
-            backdrop-filter: blur(5px);
-        }
-
-        section h2 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 768px) {
-            header h1 { font-size: 3rem; }
-            header p { font-size: 1.2rem; }
-            nav a { display: block; margin: 10px 0; }
-=======
     <title>[jeevs@cyber]~ Cyber Security Portfolio</title>
     <style>
         :root {
@@ -107,6 +30,18 @@
             line-height: 1.4;
             overflow-x: hidden;
             padding: 0;
+            position: relative;
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.6;
         }
 
         /* Terminal cursor blink */
@@ -124,12 +59,14 @@
         }
 
         header {
-            background-color: var(--bg-secondary);
+            background-color: rgba(10,10,10,0.8);
             padding: 30px;
             text-align: left;
             border-bottom: 2px solid var(--text-accent);
             position: relative;
+            z-index: 10;
             overflow: hidden;
+            backdrop-filter: blur(5px);
         }
 
         .terminal-prompt {
@@ -175,7 +112,7 @@
         }
 
         nav {
-            background-color: var(--bg-secondary);
+            background-color: rgba(10,10,10,0.8);
             padding: 15px 30px;
             border-bottom: 1px solid var(--border);
             position: sticky;
@@ -183,8 +120,10 @@
             z-index: 100;
             white-space: nowrap;
             overflow-x: auto;
+            backdrop-filter: blur(5px);
         }
 
+        /* Rest of styles same as before */
         nav::-webkit-scrollbar {
             height: 4px;
         }
@@ -224,6 +163,10 @@
             opacity: 0;
             transform: translateY(20px);
             transition: all 0.8s ease;
+            position: relative;
+            z-index: 10;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(3px);
         }
 
         section.visible {
@@ -243,15 +186,17 @@
         }
 
         .about-content, .skills-grid, .project {
-            background-color: var(--bg-secondary);
+            background-color: rgba(10,10,10,0.7);
             border: 1px solid var(--border);
             border-radius: 5px;
             padding: 25px;
             margin-bottom: 25px;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(2px);
         }
 
+        /* Remaining styles unchanged for brevity */
         .about-content::before {
             content: '> ';
             color: var(--text-accent);
@@ -375,15 +320,17 @@
         }
 
         footer {
-            background-color: var(--bg-secondary);
+            background-color: rgba(10,10,10,0.8);
             text-align: center;
             padding: 30px;
             border-top: 2px solid var(--text-accent);
             color: var(--text-blue);
             font-size: 0.9em;
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(5px);
         }
 
-        /* Glitch effect */
         @keyframes glitch {
             0% { transform: translate(0); }
             20% { transform: translate(-2px, 2px); }
@@ -397,14 +344,12 @@
             animation: glitch 0.3s infinite;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             section { padding: 30px 20px; }
             header h1 { font-size: 1.8em; }
             nav a { margin-right: 15px; font-size: 1em; }
         }
 
-        /* Terminal command input effect */
         .typewriter {
             border-right: 2px solid var(--text-primary);
             white-space: nowrap;
@@ -415,104 +360,14 @@
         @keyframes typing {
             from { width: 0; }
             to { width: 100%; }
->>>>>>> 7bf359a (Latest Commit)
         }
     </style>
 </head>
 <body>
 
-<<<<<<< HEAD
-    <!-- Particles background -->
-    <div id="particles-js"></div>
+    <canvas id="particles-canvas"></canvas>
 
-    <!-- Main content -->
-    <div class="content">
-        <header>
-            <h1>Jeevs</h1>
-            <p>Cyber Security Learner | DevOps | Tech Enthusiast</p>
-        </header>
-
-        <nav>
-            <a href="#about">About</a>
-            <a href="#projects">Projects</a>
-            <a href="#skills">Skills</a>
-            <a href="#contact">Contact</a>
-        </nav>
-
-        <section id="about">
-            <h2>About Me</h2>
-            <p>Hi, I'm a passionate developer creating modern web experiences. I love working with HTML, CSS, JavaScript, React, Node.js, and more. This portfolio features a cool particle animation background using particles.js!</p>
-        </section>
-
-        <section id="projects">
-            <h2>Projects</h2>
-            <p>Here are some of my recent projects (add your own links/descriptions):</p>
-            <ul style="list-style: none; margin-top: 20px;">
-                <li style="margin: 15px 0;">• Project One - A responsive e-commerce site</li>
-                <li style="margin: 15px 0;">• Project Two - Real-time chat application</li>
-                <li style="margin: 15px 0;">• Project Three - Data visualization dashboard</li>
-            </ul>
-        </section>
-
-        <section id="skills">
-            <h2>Skills</h2>
-            <p>HTML | CSS | JavaScript | React | Node.js | Python | Git | etc.</p>
-        </section>
-
-        <section id="contact">
-            <h2>Contact</h2>
-            <p>Email: your.email@example.com<br>
-            LinkedIn: linkedin.com/in/yourprofile<br>
-            GitHub: github.com/yourusername</p>
-        </section>
-    </div>
-
-    <!-- Load particles.js from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-
-    <script>
-        /* Custom particles.js configuration - subtle connecting lines for a modern portfolio look */
-        particlesJS("particles-js", {
-            particles: {
-                number: { value: 80, density: { enable: true, value_area: 800 } },
-                color: { value: "#ffffff" },
-                shape: { type: "circle" },
-                opacity: { value: 0.6, random: true },
-                size: { value: 3, random: true },
-                line_linked: {
-                    enable: true,
-                    distance: 150,
-                    color: "#ffffff",
-                    opacity: 0.3,
-                    width: 1
-                },
-                move: {
-                    enable: true,
-                    speed: 2,
-                    direction: "none",
-                    random: false,
-                    straight: false,
-                    out_mode: "out"
-                }
-            },
-            interactivity: {
-                detect_on: "canvas",
-                events: {
-                    onhover: { enable: true, mode: "repulse" },
-                    onclick: { enable: true, mode: "push" },
-                    resize: true
-                },
-                modes: {
-                    repulse: { distance: 100, duration: 0.4 },
-                    push: { particles_nb: 4 }
-                }
-            },
-            retina_detect: true
-        });
-    </script>
-</body>
-</html>
-=======
+    <!-- Header, nav, sections, footer same as previous version -->
     <header>
         <div class="terminal-prompt">
             <span class="prompt-user">[jeevs@cyber]</span>:<span style="color: var(--text-blue);">~</span>$ 
@@ -631,7 +486,67 @@
     </footer>
 
     <script>
-        // Terminal-style smooth scroll + active nav
+        // Particles Background - Glowing floating particles in red, blue, green
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const numParticles = 150;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+                this.color = ['#00ff00', '#ff0000', '#0066ff'][Math.floor(Math.random() * 3)];
+                this.glow = this.color;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = this.glow;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        for (let i = 0; i < numParticles; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Existing interactivity scripts (smooth scroll, section reveal, project expand, etc.)
         document.querySelectorAll('nav a').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -644,7 +559,6 @@
             });
         });
 
-        // Section reveal on scroll (terminal "loading")
         const sections = document.querySelectorAll('section');
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -655,7 +569,6 @@
         }, { threshold: 0.1 });
         sections.forEach(s => observer.observe(s));
 
-        // Auto-update active nav on scroll
         window.addEventListener('scroll', () => {
             const fromTop = window.scrollY + 100;
             sections.forEach(section => {
@@ -673,55 +586,25 @@
             });
         });
 
-        // Expand/collapse project details (terminal "cat" effect)
         document.querySelectorAll('.project').forEach(project => {
             project.addEventListener('click', () => {
                 project.classList.toggle('expanded');
-                const details = project.querySelector('.project-details');
-                if (project.classList.contains('expanded')) {
-                    details.style.maxHeight = '200px';
-                    project.querySelector('h3').innerHTML += ' <span style="color:var(--text-accent); font-size:0.8em;">[expanded]</span>';
-                } else {
-                    details.style.maxHeight = '0';
-                    project.querySelector('h3').innerHTML = project.querySelector('h3').innerHTML.replace(' <span style="color:var(--text-accent); font-size:0.8em;">[expanded]</span>', '');
-                }
             });
         });
 
-        // Skill items hover glitch effect
         document.querySelectorAll('.skill-item').forEach(item => {
             item.addEventListener('mouseenter', () => item.classList.add('glitch'));
             item.addEventListener('mouseleave', () => item.classList.remove('glitch'));
         });
 
-        // Easter egg: Ctrl+Alt+H shows "hacker mode"
+        // Easter egg remains
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.altKey && e.key === 'h') {
                 document.body.style.filter = 'invert(1) hue-rotate(180deg)';
                 setTimeout(() => document.body.style.filter = '', 2000);
             }
         });
-
-        // Terminal bell sound simulation on project expand (Web Audio API)
-        function playBell() {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            oscillator.frequency.value = 800;
-            oscillator.type = 'square';
-            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            oscillator.start(audioCtx.currentTime);
-            oscillator.stop(audioCtx.currentTime + 0.1);
-        }
-
-        document.querySelectorAll('.project').forEach(p => {
-            p.addEventListener('click', playBell);
-        });
     </script>
 
 </body>
 </html>
->>>>>>> 7bf359a (Latest Commit)

@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEEVS18.SEC - Cyber Security Student</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #0f0;
+            overflow-x: hidden;
+        }
+
+        .particle {
+            position: fixed;
+            font-size: 12px;
+            opacity: 0.6;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-100vh); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 0, 0.05) 2px,
+                rgba(0, 255, 0, 0.05) 4px
+            );
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #000;
+            border-bottom: 2px solid #ef4444;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo-red { color: #ef4444; }
+        .logo-blue { color: #3b82f6; }
+        .logo-green { color: #0f0; }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #0f0;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 72px;
+            bottom: 0;
+            width: 256px;
+            background: rgba(0, 0, 0, 0.9);
+            border-right: 2px solid #3b82f6;
+            padding: 16px;
+            overflow-y: auto;
+            z-index: 50;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-title {
+            color: #ef4444;
+            margin-bottom: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-menu {
+            border-top: 1px solid #333;
+            padding-top: 8px;
+        }
+
+        .nav-item {
+            display: block;
+            width: 100%;
+            background: none;
+            border: none;
+            color: #666;
+            padding: 8px 12px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .nav-item:hover {
+            color: #fff;
+            background: #111;
+        }
+
+        .nav-item.active {
+            background: #ef4444;
+            color: #fff;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .system-status {
+            border-top: 1px solid #333;
+            padding-top: 16px;
+            margin-top: 16px;
+        }
+
+        .status-title {
+            color: #3b82f6;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .status-label { color: #666; }
+        .status-value-green { color: #0f0; }
+        .status-value-red { color: #ef4444; }
+
+        .main-content {
+            margin-left: 256px;
+            margin-top: 72px;
+            padding: 32px;
+            min-height: calc(100vh - 72px);
+        }
+
+        .terminal-window {
+            border: 2px solid #0f0;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 24px;
+            margin-bottom: 24px;
+            max-width: 1024px;
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            color: #0f0;
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #eab308; }
+        .dot-green { background: #22c55e; }
+
+        .terminal-line {
+            color: #0f0;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .cursor {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .hero-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 24px 0 16px 0;
+        }
+
+        .title-red { color: #ef4444; }
+        .title-blue { color: #3b82f6; }
+        .title-white { color: #fff; }
+
+        .hero-subtitle {
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .hero-description {
+            font-size: 14px;
+            color: #888;
+            max-width: 600px;
+            margin-bottom: 24px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: 2px solid;
+            background: none;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #dc2626;
+        }
+
+        .btn-secondary {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .btn-secondary:hover {
+            background: #3b82f6;
+            color: #000;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 24px;
+        }
+
+        .bracket-red { color: #ef4444; }
+        .bracket-blue { color: #3b82f6; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            max-width: 1200px;
+        }
+
+        .card {
+            border: 2px solid #333;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: #ef4444;
+            transform: translateX(8px);
+        }
+
+        .card-title {
+            font-size: 18px;
+            color: #fff;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: auto;
+        }
+
+        .badge-critical { background: #ef4444; color: #fff; }
+        .badge-high { background: #f97316; color: #fff; }
+        .badge-medium { background: #eab308; color: #000; }
+        .badge-low { background: #22c55e; color: #000; }
+
+        .card-tech {
+            color: #3b82f6;
+            font-size: 12px;
+            margin-bottom: 16px;
+        }
+
+        .box-red {
+            border: 2px solid #ef4444;
+        }
+
+        .box-blue {
+            border: 2px solid #3b82f6;
+        }
+
+        .box-green {
+            border: 2px solid #0f0;
+        }
+
+        .box-title {
+            font-weight: bold;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .skill-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .skill-progress {
+            color: #0f0;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .tag {
+            padding: 8px 16px;
+            border: 1px solid #0f0;
+            color: #0f0;
+            font-size: 12px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .tag:hover {
+            background: #0f0;
+            color: #000;
+        }
+
+        .cert-card {
+            border-left: 4px solid #ef4444;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 24px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+
+        .cert-card:hover {
+            border-color: #3b82f6;
+        }
+
+        .cert-title {
+            font-size: 18px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .contact-line {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .prompt { color: #ef4444; }
+        .label { color: #666; }
+        .value { color: #3b82f6; }
+
+        .btn-contact {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(to right, #ef4444, #3b82f6);
+            border: 2px solid #0f0;
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-contact:hover {
+            background: linear-gradient(to right, #dc2626, #2563eb);
+        }
+
+        .scan-output {
+            margin-top: 16px;
+            font-size: 12px;
+        }
+
+        .scan-line {
+            margin-bottom: 4px;
+        }
+
+        .warning { color: #eab308; }
+        .success { color: #0f0; }
+
+        .hidden {
+            display: none;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    
+    <header>
+        <div class="logo">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <span>
+                <span class="logo-red">JEEVS</span><span class="logo-blue">18</span><span class="logo-green">.SEC</span>
+            </span>
+        </div>
+        <div class="status">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="status-dot"></div>
+                <span style="color: rgb(104, 244, 211);">SECURE</span>
+            </div>
+            <span style="color: #666;">IP: 192.168.1.18</span>
+            <span style="color: #666;">PORT: 8443</span>
+        </div>
+    </header>
+
+    <div class="sidebar">
+        <div class="nav-section">
+            <div class="nav-title">
+                <span>▸</span>
+                <span>$ NAVIGATION</span>
+            </div>
+            <div class="nav-menu">
+                <button class="nav-item active" onclick="showSection('home')">> HOME</button>
+                <button class="nav-item" onclick="showSection('exploits')">> EXPLOITS</button>
+                <button class="nav-item" onclick="showSection('skills')">> SKILLS</button>
+                <button class="nav-item" onclick="showSection('certs')">> CERTS</button>
+                <button class="nav-item" onclick="showSection('contact')">> CONTACT</button>
+            </div>
+        </div>
+
+        <div class="system-status">
+            <div class="status-title">SYSTEM STATUS</div>
+            <div class="status-item">
+                <span class="status-label">Firewall:</span>
+                <span class="status-value-green">ACTIVE</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Encryption:</span>
+                <span class="status-value-green">AES-256</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">IDS:</span>
+                <span class="status-value-green">ENABLED</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Threats:</span>
+                <span class="status-value-red">0 DETECTED</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- HOME SECTION -->
+        <div id="home" class="section fade-in">
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <div class="terminal-dot dot-red"></div>
+                    <div class="terminal-dot dot-yellow"></div>
+                    <div class="terminal-dot dot-green"></div>
+                    <span style="margin-left: 16px;">root@jeevs:~$</span>
+                </div>
+                
+                <div id="boot-sequence">
+                    <div class="terminal-line">> INITIALIZING JEEVS SECURITY SYSTEM...</div>
+                    <div class="terminal-line">> LOADING SECURITY PROTOCOLS...</div>
+                    <div class="terminal-line">> ESTABLISHING ENCRYPTED CONNECTION...</div>
+                    <div class="terminal-line">> FIREWALL STATUS: [ACTIVE]</div>
+                    <div class="terminal-line">> INTRUSION DETECTION: [ENABLED]</div>
+                    <div class="terminal-line">> ACCESS GRANTED - WELCOME TO JEEVS<span class="cursor">_</span></div>
+                </div>
+
+                <div id="hero-content" style="margin-top: 24px;">
+                    <div class="hero-title">
+                        <div><span class="title-red">CYBERSECURITY</span> <span class="title-blue">LEARNER</span></div>
+                    </div>
+                    <div class="hero-subtitle">CTF Player | Operating System Enthusiast</div>                   
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="runScan()">RUN SCAN</button>
+                        <button class="btn btn-secondary" onclick="showSection('exploits')">VIEW EXPLOITS</button>
+                    </div>
+
+                    <div id="scan-output" class="scan-output hidden"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXPLOITS SECTION -->
+        <div id="exploits" class="section hidden">
+            <div class="section-title">
+                <span class="bracket-red">[</span><span class="title-white">SECURITY TOOLS</span><span class="bracket-blue">]</span>
+            </div>
+            <p style="color: #888; font-size: 14px; margin-bottom: 24px;">Custom developed security testing utilities</p>
+
+            <div style="display: grid; gap: 16px; max-width: 1200px;">
+                <div class="card">
+                    <div class="card-title">
+                        <span>SQL Injection Scanner</span>
+                    </div>
+                    <div class="card-tech">Python</div>
+                    <div style="color: #666; font-size: 12px;">Last updated: 2 days ago</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SKILLS SECTION -->
+        <div id="skills" class="section hidden">
+            <div class="section-title">
+                <span class="bracket-red">[</span><span class="title-white">SKILL MATRIX</span><span class="bracket-blue">]</span>
+            </div>
+
+            <div class="grid-2">
+                <div class="card box-blue">
+                    <div class="box-title" style="color: #3b82f6;">
+                        <span>🔒</span>
+                        <span>DEFENSIVE SECURITY</span>
+                    </div>
+                    <div class="skill-bar">
+                        <span>Incident Response</span>
+                        <span class="skill-progress">█░░░ 10%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card box-green" style="margin-top: 24px; max-width: 1200px;">
+                <div class="box-title" style="color: #0f0;">
+                    <span>💾</span>
+                    <span>TECH STACK</span>
+                </div>
+                <div class="tag-container">
+                    <span class="tag">Python</span>
+                    <span class="tag">Bash</span>
+                    <span class="tag">Metasploit</span>
+                    <span class="tag">Burp Suite</span>
+                    <span class="tag">Wireshark</span>
+                    <span class="tag">Nmap</span>
+                    <span class="tag">Kali Linux</span>
+                    <span class="tag">Docker</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATIONS SECTION -->
+        <div id="certs" class="section hidden">
+            <div class="section-title">
+                <span class="bracket-red">[</span><span class="title-white">CERTIFICATIONS</span><span class="bracket-blue">]</span>
+            </div>
+
+            <div style="max-width: 1024px;">
+                <div class="cert-card">
+                    <div class="cert-title">
+                        <span>🛡️</span>
+                        <span>Cryptography and Network Security - NPTEL</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTACT SECTION -->
+        <div id="contact" class="section hidden">
+            <div class="section-title">
+                <span class="bracket-red">[</span><span class="title-white">ESTABLISH CONNECTION</span><span class="bracket-blue">]</span>
+            </div>
+
+            <div class="card box-green" style="max-width: 1024px;">
+                <div class="contact-line">
+                    <span class="prompt">$</span>
+                    <span class="label">EMAIL:</span>
+                    <span class="value">ranjan18jeeva@gmail.com</span>
+                </div>
+                <div class="contact-line">
+                    <span class="prompt">$</span>
+                    <span class="label">GITHUB:</span>
+                    <span class="value">github.com/Jeevaranjan-18</span>
+                </div>
+                <button class="btn-contact">INITIATE SECURE HANDSHAKE</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create falling particles
+        function createParticles() {
+            const container = document.body;
+            const colors = ['#ef4444', '#3b82f6'];
+            
+            for (let i = 0; i < 60; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.textContent = Math.random().toString(36).substring(2, 3);
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.color = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Navigation
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            sections.forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            navItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.remove('hidden');
+            document.getElementById(sectionId).classList.add('fade-in');
+            event.target.classList.add('active');
+        }
+
+        // Run scan simulation
+        function runScan() {
+            const output = document.getElementById('scan-output');
+            const btn = event.target;
+            
+            btn.textContent = 'SCANNING...';
+            btn.disabled = true;
+            
+            output.classList.remove('hidden');
+            output.innerHTML = '';
+            
+            const messages = [
+                { text: '[!] Scanning ports...', class: 'warning', delay: 500 },
+                { text: '[!] Checking vulnerabilities...', class: 'warning', delay: 1500 },
+                { text: '[+] Scan complete: System secure', class: 'success', delay: 2500 }
+            ];
+            
+            messages.forEach(msg => {
+                setTimeout(() => {
+                    const line = document.createElement('div');
+                    line.className = 'scan-line ' + msg.class;
+                    line.textContent = msg.text;
+                    output.appendChild(line);
+                }, msg.delay);
+            });
+            
+            setTimeout(() => {
+                btn.textContent = 'RUN SCAN';
+                btn.disabled = false;
+            }, 3000);
+        }
+
+        // Initialize
+        window.onload = function() {
+            createParticles();
+        };
+    </script>
+</body>
+</html>
